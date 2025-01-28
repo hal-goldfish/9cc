@@ -28,5 +28,16 @@ assert 10 "-10 + 20"
 assert 10 "-(-(1 + 2 + 3 - -4))"
 assert 100 "-10*-10"
 assert 20 "+10++10"
+assert 1 "1==1"
+assert 1 " -10 + 20 == -(-(1 + 2 + 3 - -4))"
+assert 1 "0 < 1"
+assert 0 "0 > 1"
+assert 1 "-1 >=-2"
+assert 0 "-1 <=-2"
+assert 0 "1<1"
+assert 0 "1>1"
+assert 1 "1<100"
+
+
 
 echo OK

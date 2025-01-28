@@ -7,9 +7,12 @@
 
 #include "9cc.h"
 
+Node *code[100];
+
 // トークンの種類
 typedef enum {
     TK_RESERVED, // 記号
+    TK_IDENT,    // 識別子
     TK_NUM,      // 整数トークン
     TK_EOF,      // 入力の終わりを表すトークン
 } TokenKind;
@@ -61,6 +64,18 @@ bool consume(char *op) {
     return true;
 }
 
+bool is_ident() {
+    return token->kind == TK_IDENT;
+}
+
+void consume_ident() {
+    if (token->kind != TK_IDENT) {
+        error("変数ではありません");
+        return;
+    }
+    token = token->next;
+}
+
 // 次のトークンが期待している記号のときには、トークンを1つ読み進める。
 // それ以外の場合にはエラーを報告する。
 void expect(char *op) {
@@ -108,7 +123,12 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
+        if ('a' <= *p && *p <= 'z') {
+            cur = new_token(TK_IDENT, cur, p++, 1);
+            continue;
+        }
+
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == ';') {
             cur = new_token(TK_RESERVED, cur, p++, 1);
             continue;
         }
@@ -136,7 +156,10 @@ Token *tokenize(char *p) {
                 p += 2;
                 continue;
             }
-            continue;
+            else {
+                cur = new_token(TK_RESERVED, cur, p++, 1);
+                continue;
+            }
         }
         
         if (isdigit(*p)) {
@@ -179,7 +202,16 @@ Node *primary() {
         return node;
     }
 
-    // そうでなければ数値のはず
+    // 変数
+    if (is_ident()) {
+        Node *node = calloc(1, sizeof(Node));
+        node->kind = ND_LVAR;
+        node->offset = (token->str[0] - 'a' + 1) * 8;
+        consume_ident();
+        return node;
+    }
+
+    // 数字
     return new_node_num(expect_number());
 }
 
@@ -244,6 +276,30 @@ Node *equality() {
     }
 }
 
+Node *assign() {
+    Node *node = equality();
+
+    if (consume("=")) {
+        node = new_node(ND_ASSIGN, node, assign());
+    }
+
+    return node;
+}
+
 Node *expr() {
-    return equality();
+    return assign();
+}
+
+Node *stmt() {
+    Node *node = expr();
+    expect(";");
+    return node;
+}
+
+Node *program() {
+    int i = 0;
+    for (; !at_eof(); i++) {
+        code[i] = stmt();
+    }
+    code[i] = NULL;
 }

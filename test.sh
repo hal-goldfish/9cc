@@ -17,7 +17,7 @@ assert() {
   fi
 }
 
-cc -o 9cc 9cc.c
+make 9cc
 
 assert 0 0
 assert 42 42

@@ -1,8 +1,6 @@
 #!/bin/bash
 assert() {
   
-  cc -o 9cc 9cc.c
-  
   expected="$1"
   input="$2"
 
@@ -18,6 +16,8 @@ assert() {
     exit 1
   fi
 }
+
+cc -o 9cc 9cc.c
 
 assert 0 0
 assert 42 42

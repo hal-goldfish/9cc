@@ -1,5 +1,8 @@
 #!/bin/bash
 assert() {
+  
+  cc -o 9cc 9cc.c
+  
   expected="$1"
   input="$2"
 
@@ -19,5 +22,6 @@ assert() {
 assert 0 0
 assert 42 42
 assert 21 "5+20-4"
+assert 21 "5 + 20 - 4+0"
 
 echo OK

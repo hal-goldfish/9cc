@@ -7,6 +7,8 @@
 
 #include "9cc.h"
 
+int label_count;
+
 
 // 変数を名前で検索する。見つからなかった場合はNULLを返す。
 LVar *find_lvar(Token *tok) {
@@ -21,7 +23,7 @@ LVar *find_lvar(Token *tok) {
 // 真を返す。それ以外の場合には偽を返す。
 bool consume(char *op) {
 
-    if ((token->kind == TK_RESERVED || token->kind == TK_RETURN) &&
+    if ((token->kind == TK_RESERVED || token->kind == TK_RETURN || token->kind == TK_IF || token->kind == TK_ELSE) &&
         strlen(op) == token->len &&
         memcmp(token->str, op, token->len) == 0) {
         token = token->next;
@@ -196,9 +198,23 @@ Node *expr() {
     return assign();
 }
 
-Node *stmt() {
+Node *statement() {
 
     Node *node;
+
+    if (consume("if")) {
+        expect("(");
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_IF;
+        node->cond = expr();
+        node->label = label_count++;
+        expect(")");
+        node->then = statement();
+        if (consume("else")) {
+            node->els = statement();
+        }
+        return node;
+    }
 
     if (consume("return")) {
         node = calloc(1, sizeof(Node));
@@ -215,7 +231,7 @@ Node *program() {
     locals = calloc(1, sizeof(LVar));
     int i = 0;
     for (; !at_eof(); i++) {
-        code[i] = stmt();
+        code[i] = statement();
     }
     code[i] = NULL;
 }

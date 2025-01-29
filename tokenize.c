@@ -47,9 +47,19 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])) {
+        if (strncmp(p, "return", 6) == 0 && !is_alnum(p[6])) { // return 
             cur = new_token(TK_RETURN, cur, p, 6);
             p += 6;
+            continue;
+        }
+        if (strncmp(p, "if", 2) == 0 && !is_alnum(p[2])) { // if
+            cur = new_token(TK_IF, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        if (strncmp(p, "else", 2) == 0 && !is_alnum(p[4])) { // else
+            cur = new_token(TK_ELSE, cur, p, 4);
+            p += 4;
             continue;
         }
 

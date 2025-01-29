@@ -40,6 +40,8 @@ assert 1 "1<100;"
 assert 0 "1<100; 1<1;"
 assert 3 "a=1; b=2; a+b;"
 assert 1 "(a) = 1;"
+assert 2 "foo = 1; bar = 2; foo*bar;"
+assert 6 "foo = 2; bar = 3; return foo * bar; foo+bar;"
 
 
 

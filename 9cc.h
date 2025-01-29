@@ -14,6 +14,7 @@ typedef enum {
     ND_LESEQU,  // <=
     ND_ASSIGN,  // = 代入演算子
     ND_LVAR,    // ローカル変数
+    ND_RETURN,  // return 文
     ND_NUM,     // 整数
 } NodeKind;
 
@@ -30,10 +31,11 @@ struct Node {
 
 // トークンの種類
 typedef enum {
-    TK_RESERVED, // 記号
-    TK_IDENT,    // 識別子
-    TK_NUM,      // 整数トークン
-    TK_EOF,      // 入力の終わりを表すトークン
+    TK_RESERVED,    // 記号
+    TK_IDENT,       // 識別子
+    TK_NUM,         // 整数
+    TK_RETURN,      // return 文
+    TK_EOF,         // EOF
 } TokenKind;
 
 typedef struct Token Token;
@@ -47,8 +49,20 @@ struct Token {
     int len;        // トークンの長さ
 };
 
+typedef struct LVar LVar;
+
+// ローカル変数の型
+struct LVar {
+  LVar *next; // 次の変数かNULL
+  char *name; // 変数の名前
+  int len;    // 名前の長さ
+  int offset; // RBPからのオフセット
+};
+
 extern Token *token;
 extern char *user_input;
+
+extern LVar *locals;
 
 Token *tokenize(char *);
 Node *program();

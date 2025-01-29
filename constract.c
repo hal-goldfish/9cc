@@ -7,15 +7,27 @@
 
 #include "9cc.h"
 
+
+// 変数を名前で検索する。見つからなかった場合はNULLを返す。
+LVar *find_lvar(Token *tok) {
+    for (LVar *var = locals; var; var = var->next) {
+        if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
+            return var;
+    }
+    return NULL;
+}
+
 // 次のトークンが期待している記号のときには、トークンを1つ読み進めて
 // 真を返す。それ以外の場合には偽を返す。
 bool consume(char *op) {
-    if (token->kind != TK_RESERVED ||
-        strlen(op) != token->len ||
-        memcmp(token->str, op, token->len))
-        return false;
-    token = token->next;
-    return true;
+
+    if ((token->kind == TK_RESERVED || token->kind == TK_RETURN) &&
+        strlen(op) == token->len &&
+        memcmp(token->str, op, token->len) == 0) {
+        token = token->next;
+        return true;
+    }
+    return false;
 }
 
 bool is_ident() {
@@ -86,7 +98,21 @@ Node *primary() {
     if (is_ident()) {
         Node *node = calloc(1, sizeof(Node));
         node->kind = ND_LVAR;
-        node->offset = (token->str[0] - 'a' + 1) * 8;
+
+        LVar *lvar = find_lvar(token);
+        if (lvar) {
+            node->offset = lvar->offset;
+        }
+        else {
+            lvar = calloc(1, sizeof(LVar));
+            lvar->next = locals;
+            lvar->name = token->str;
+            lvar->len = token->len;
+            lvar->offset = locals->offset + 8;
+            node->offset = lvar->offset;
+            locals = lvar;
+        }
+
         consume_ident();
         return node;
     }
@@ -171,12 +197,22 @@ Node *expr() {
 }
 
 Node *stmt() {
-    Node *node = expr();
+
+    Node *node;
+
+    if (consume("return")) {
+        node = calloc(1, sizeof(Node));
+        node->kind = ND_RETURN;
+        node->lhs = expr();
+    }
+    else node = expr();
+
     expect(";");
     return node;
 }
 
 Node *program() {
+    locals = calloc(1, sizeof(LVar));
     int i = 0;
     for (; !at_eof(); i++) {
         code[i] = stmt();

@@ -287,8 +287,9 @@ Node *statement() {
 Node *program() {
     locals = calloc(1, sizeof(LVar));
     int i = 0;
+    code = new_vec();
     for (; !at_eof(); i++) {
-        code[i] = statement();
+        vec_push(code, statement());
+
     }
-    code[i] = NULL;
 }

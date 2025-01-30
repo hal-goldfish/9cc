@@ -10,7 +10,7 @@
 Token *token;
 char *user_input;
 
-Node *code[100];
+Vector *code;
 
 LVar *locals;
 
@@ -31,14 +31,14 @@ int main(int argc, char **argv) {
     printf("main:\n");
 
     // // プロローグ
-    // // 変数26個分の領域を確保する
+    // // 変数のメモリ領域を確保する
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
     printf("  sub rsp, %d\n", locals->offset);
 
     // 抽象構文木を下りながらコード生成
-    for (int i = 0; code[i]; i++) {
-        gen(code[i]);
+    for (int i = 0; i < vec_size(code); i++) {
+        gen(code->data[i]);
 
         // 式の評価結果としてスタックに一つの値が残っている
         // はずなので、スタックが溢れないようにポップしておく

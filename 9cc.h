@@ -107,7 +107,7 @@ Node *program();
 void gen(Node *);
 void error(char *, ...);
 
-extern Node *code[];
+extern Vector *code;
 
 void error_at(char *, char *, ...);
 void error(char *, ...);

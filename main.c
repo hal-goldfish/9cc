@@ -30,11 +30,11 @@ int main(int argc, char **argv) {
     printf(".globl main\n");
     printf("main:\n");
 
-    // プロローグ
-    // 変数26個分の領域を確保する
+    // // プロローグ
+    // // 変数26個分の領域を確保する
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, 208\n");
+    printf("  sub rsp, %d\n", locals->offset);
 
     // 抽象構文木を下りながらコード生成
     for (int i = 0; code[i]; i++) {

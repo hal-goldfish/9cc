@@ -123,12 +123,23 @@ Node *primary() {
     return new_node_num(expect_number());
 }
 
+Node *postfix() {
+    Node *node = primary();
+    if (consume("++")) {
+        node = new_node(ND_INC, node, NULL);
+    }
+    if (consume("--")) {
+        node = new_node(ND_DEC, node, NULL);
+    }
+    return node;
+}
+
 Node *unary() {
     if (consume("+")) 
-        return primary();
+        return postfix();
     if (consume("-"))
-        return new_node(ND_SUB, new_node_num(0), primary());
-    return primary();
+        return new_node(ND_SUB, new_node_num(0), postfix());
+    return postfix();
 }
 
 Node *mul() {
@@ -170,7 +181,7 @@ Node *relational() {
         else return node;
     }
 }
- 
+
 Node *equality() {
     Node *node = relational();
 
@@ -190,6 +201,23 @@ Node *assign() {
     if (consume("=")) {
         node = new_node(ND_ASSIGN, node, assign());
     }
+    if (consume("+=")) {
+        Node *rhs = new_node(ND_ADD, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    if (consume("-=")) {
+        Node *rhs = new_node(ND_SUB, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    if (consume("*=")) {
+        Node *rhs = new_node(ND_MUL, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    if (consume("/=")) {
+        Node *rhs = new_node(ND_DIV, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    
 
     return node;
 }

@@ -10,6 +10,7 @@
 
 
 // 左辺値を要求する場合の処理
+// 左辺値のアドレスをスタックトップに持ってくる
 void gen_lval(Node *node) {
     if (node->kind != ND_LVAR) {
         error("代入の左辺値が変数ではありません");
@@ -32,6 +33,24 @@ void gen(Node *node) {
         printf("  pop rax\n");
         printf("  mov rax, [rax]\n");
         printf("  push rax\n");
+        return;
+
+    case ND_INC:
+        gen_lval(node->lhs);
+        printf("  pop rax\n");
+        printf("  mov esi, dword ptr [rax]\n");
+        printf("  inc esi\n");
+        printf("  mov dword ptr [rax], esi\n");
+        printf("  push [rax]\n");
+        return;
+
+    case ND_DEC:
+        gen_lval(node->lhs);
+        printf("  pop rax\n");
+        printf("  mov esi, dword ptr [rax]\n");
+        printf("  dec esi\n");
+        printf("  mov dword ptr [rax], esi\n");
+        printf("  push [rax]\n");
         return;
 
     case ND_ASSIGN:
@@ -75,7 +94,7 @@ void gen(Node *node) {
         gen(node->cond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je   .Lend%d\n", node->label);
+        printf("  je  .Lend%d\n", node->label);
         gen(node->body);
         printf("  jmp .Lbegin%d\n", node->label);
         printf(".Lend%d:\n", node->label);
@@ -87,7 +106,7 @@ void gen(Node *node) {
         gen(node->cond);
         printf("  pop rax\n");
         printf("  cmp rax, 0\n");
-        printf("  je   .Lend%d\n", node->label);
+        printf("  je  .Lend%d\n", node->label);
         gen(node->body);
         gen(node->inc);
         printf("  jmp .Lbegin%d\n", node->label);

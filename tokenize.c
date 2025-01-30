@@ -81,6 +81,37 @@ Token *tokenize(char *p) {
             continue;
         }
 
+        if (memcmp("+=", p, 2) == 0) {
+            cur = new_token(TK_RESERVED, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        if (memcmp("-=", p, 2) == 0) {
+            cur = new_token(TK_RESERVED, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        if (memcmp("*=", p, 2) == 0) {
+            cur = new_token(TK_RESERVED, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        if (memcmp("/=", p, 2) == 0) {
+            cur = new_token(TK_RESERVED, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        if (memcmp("++", p, 2) == 0) {
+            cur = new_token(TK_RESERVED, cur, p, 2);
+            p += 2;
+            continue;
+        }
+        if (memcmp("--", p, 2) == 0) {
+            cur = new_token(TK_RESERVED, cur, p, 2);
+            p += 2;
+            continue;
+        }
+
         if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')' || *p == ';' || *p == '{' || *p == '}') {
             cur = new_token(TK_RESERVED, cur, p++, 1);
             continue;

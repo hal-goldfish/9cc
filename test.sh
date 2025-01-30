@@ -27,7 +27,7 @@ assert 135 "((1+2)*(5+0)) * (3 + 2*3);"
 assert 10 "-10 + 20;"
 assert 10 "-(-(1 + 2 + 3 - -4));"
 assert 100 "-10*-10;"
-assert 20 "+10++10;"
+assert 20 "+10+(+10);"
 assert 1 "1==1;"
 assert 1 " -10 + 20 == -(-(1 + 2 + 3 - -4));"
 assert 1 "0 < 1;"
@@ -52,17 +52,51 @@ assert 2 "{{3;}2;}"
 assert 2 "if(1>2) {1;}else {if(2>1) {2;}else 3;}"
 assert 55 "
 sum = 0;
-for(i = 0; i <= 10; i = i + 1) {
-    sum = sum + i;
+for(i = 0; i <= 10; i++) {
+    sum += i;
 }
 return sum;"
 assert 55 "
 i = 0; sum = 0;
 while(i <= 10) {
     sum = sum + i;
-    i = i + 1;
+    i++;
 }
-return sum;
+return sum;"
+assert 1 "i = 2; i--; return i;"
+assert 55 "
+i = 10; sum = 0;
+while(i > 0) {
+    sum = sum + i;
+    i--;
+}
+return sum;"
+assert 5 "
+a = 2;
+b = 3;
+a += b;
+return a;
+"
+assert 4 "
+a = 100;
+b = 25;
+a /= b;
+return a;
+"
+assert 1 "
+a = 0;
+c = (a++);
+return a;
+"
+assert 1 "
+a = -3;
+b = 4;
+return a+b;
+"
+assert 0 "
+a = 0;
+c = (a++);
+return c;
 "
 
 

@@ -8,24 +8,26 @@ typedef struct { // ベクタ
 
 // 抽象構文木のノードの種類
 typedef enum {
-    ND_ADD,     // +
-    ND_SUB,     // -
-    ND_MUL,     // *
-    ND_DIV,     // /
-    ND_EQU,     // ==
-    ND_NOTEQU,  // !=
-    ND_GRE,     // >
-    ND_LES,     // <
-    ND_GREEQU,  // >=
-    ND_LESEQU,  // <=
-    ND_ASSIGN,  // = 代入演算子
-    ND_LVAR,    // ローカル変数
-    ND_RETURN,  // return 文
-    ND_IF,      // if 文
-    ND_BLOCK,   // ブロック {}
-    ND_FOR,     // for
-    ND_WHILE,   // while
-    ND_NUM,     // 整数
+    ND_ADD,         // +
+    ND_SUB,         // -
+    ND_MUL,         // *
+    ND_DIV,         // /
+    ND_EQU,         // ==
+    ND_NOTEQU,      // !=
+    ND_GRE,         // >
+    ND_LES,         // <
+    ND_GREEQU,      // >=
+    ND_LESEQU,      // <=
+    ND_ASSIGN,      // = 代入演算子
+    ND_INC,         // ++ インクリメント
+    ND_DEC,         // -- デクリメント
+    ND_LVAR,        // ローカル変数
+    ND_RETURN,      // return 文
+    ND_IF,          // if 文
+    ND_BLOCK,       // ブロック {}
+    ND_FOR,         // for
+    ND_WHILE,       // while
+    ND_NUM,         // 整数
 } NodeKind;
 
 

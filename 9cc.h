@@ -1,5 +1,11 @@
 
 
+typedef struct { // ベクタ
+    int len;
+    int cap;
+    void **data; // void* の配列
+} Vector;
+
 // 抽象構文木のノードの種類
 typedef enum {
     ND_ADD,     // +
@@ -16,6 +22,7 @@ typedef enum {
     ND_LVAR,    // ローカル変数
     ND_RETURN,  // return 文
     ND_IF,      // if 文
+    ND_BLOCK,   // ブロック {}
     ND_NUM,     // 整数
 } NodeKind;
 
@@ -31,17 +38,15 @@ struct Node {
     int offset;     // kindがND_LVARの場合のみ使う
 
 
+    // if 
     Node *cond;
     Node *then;
     Node *els;
     int label;
-};
 
-typedef struct { // Node のベクタ
-    int len;
-    int cap;
-    void **top;
-} Vector;
+    // block
+    Vector *stmts;
+};
 
 Vector *new_vec();
 void vec_push(Vector *, void *);

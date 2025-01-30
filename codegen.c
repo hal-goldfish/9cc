@@ -65,6 +65,14 @@ void gen(Node *node) {
         }
         printf(".Lend%d:\n", node->label);
         return;
+    case ND_BLOCK:
+        for (int i = 0; i < vec_size(node->stmts); i++) {
+            gen(node->stmts->data[i]);
+            if (i != vec_size(node->stmts)-1) { // 最後の文以外の値は要らないのでpop
+                printf("  pop rax\n");
+            }
+        }
+        return;
     }
 
     gen(node->lhs);
@@ -73,7 +81,7 @@ void gen(Node *node) {
     printf("  pop rdi\n");
     printf("  pop rax\n");
 
-    switch (node->kind) {
+    switch (node->kind) { // 計算
     case ND_ADD:
         printf("  add rax, rdi\n");
         break;

@@ -200,11 +200,23 @@ Node *expr() {
 
 Node *statement() {
 
-    Node *node;
+    Node *node = calloc(1, sizeof(Node));
 
+    if (consume("{")) {
+        node->kind = ND_BLOCK;
+        node->stmts = new_vec();
+
+        while (!consume("}")) {
+            Node *tmp = calloc(1, sizeof(Node));
+            tmp = statement();
+            vec_push(node->stmts, tmp);
+        }
+
+        return node;
+    }
+ 
     if (consume("if")) {
         expect("(");
-        node = calloc(1, sizeof(Node));
         node->kind = ND_IF;
         node->cond = expr();
         node->label = label_count++;
@@ -217,7 +229,6 @@ Node *statement() {
     }
 
     if (consume("return")) {
-        node = calloc(1, sizeof(Node));
         node->kind = ND_RETURN;
         node->lhs = expr();
     }

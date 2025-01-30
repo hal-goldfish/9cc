@@ -1,6 +1,11 @@
+#include <ctype.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "9cc.h"
-#include <stdio.h>
 
 Token *token;
 char *user_input;

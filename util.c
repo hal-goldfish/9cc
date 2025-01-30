@@ -10,7 +10,7 @@
 
 Vector *new_vec() {
     Vector *v = malloc(sizeof(Vector));
-    v->top = malloc(sizeof(void*) * 16);
+    v->data = malloc(sizeof(void*) * 16);
     v->cap = 16;
     v->len = 0;
     return v;
@@ -18,17 +18,17 @@ Vector *new_vec() {
 
 void vec_push(Vector *vec, void *p) {
     if (vec->cap == vec->len) {
-        vec->top = realloc(vec->top, sizeof(void*) * vec->cap*2);
+        vec->data = realloc(vec->data, sizeof(void*) * vec->cap*2);
         vec->cap *= 2;
     }
-    vec->top[vec->len++] = p;
+    vec->data[vec->len++] = p;
 }
 
 void *vec_pop(Vector *vec) {
     if (vec->len == 0) {
         error("ベクタが空です");
     }
-    return vec->top[--(vec->len)];
+    return vec->data[--(vec->len)];
 }
 
 int vec_size(Vector *vec) {

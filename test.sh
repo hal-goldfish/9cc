@@ -59,8 +59,16 @@ return sum;"
 assert 55 "
 i = 0; sum = 0;
 while(i <= 10) {
-    sum = sum + i;
-    i = i + 1;
+    sum += i;
+    i += 1;
+}
+return sum;
+"
+assert 55 "
+i = 10; sum = 0;
+while(i >= 0) {
+    sum += i;
+    i -= 1;
 }
 return sum;
 "

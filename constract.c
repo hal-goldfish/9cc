@@ -190,6 +190,22 @@ Node *assign() {
     if (consume("=")) {
         node = new_node(ND_ASSIGN, node, assign());
     }
+    if (consume("+=")) {
+        Node *rhs = new_node(ND_ADD, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    if (consume("-=")) {
+        Node *rhs = new_node(ND_SUB, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    if (consume("*=")) {
+        Node *rhs = new_node(ND_MUL, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
+    if (consume("/=")) {
+        Node *rhs = new_node(ND_DIV, node, assign());
+        node = new_node(ND_ASSIGN, node, rhs);
+    }
 
     return node;
 }

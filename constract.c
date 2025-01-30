@@ -23,7 +23,7 @@ LVar *find_lvar(Token *tok) {
 // 真を返す。それ以外の場合には偽を返す。
 bool consume(char *op) {
 
-    if ((token->kind == TK_RESERVED || token->kind == TK_RETURN || token->kind == TK_IF || token->kind == TK_ELSE || token->kind == TK_FOR) &&
+    if ((token->kind == TK_RESERVED || token->kind == TK_RETURN || token->kind == TK_IF || token->kind == TK_ELSE || token->kind == TK_FOR || token->kind == TK_WHILE) &&
         strlen(op) == token->len &&
         memcmp(token->str, op, token->len) == 0) {
         token = token->next;
@@ -225,6 +225,16 @@ Node *statement() {
         if (consume("else")) {
             node->els = statement();
         }
+        return node;
+    }
+
+    if (consume("while")) {
+        expect("(");
+        node->kind = ND_WHILE;
+        node->label = label_count++;
+        node->cond = expr();
+        expect(")");
+        node->body = statement();
         return node;
     }
 

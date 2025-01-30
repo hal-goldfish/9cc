@@ -3,3 +3,8 @@
 tmp*
 a.out
 9cc
+bash
+.*
+memo
+test.c
+*.txt

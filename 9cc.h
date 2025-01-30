@@ -24,6 +24,7 @@ typedef enum {
     ND_IF,      // if 文
     ND_BLOCK,   // ブロック {}
     ND_FOR,     // for
+    ND_WHILE,   // while
     ND_NUM,     // 整数
 } NodeKind;
 
@@ -41,6 +42,7 @@ struct Node {
 
     // "if" (cond) then "else" els
     // "for" (init; cond; inc) body
+    // "while" (cond) body
     Node *cond;
     Node *then;
     Node *els;
@@ -70,6 +72,7 @@ typedef enum {
     TK_IF,          // if 文
     TK_ELSE,        // else
     TK_FOR,         // for
+    TK_WHILE,       // while
     TK_EOF,         // EOF
 } TokenKind;
 

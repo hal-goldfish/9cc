@@ -67,6 +67,11 @@ Token *tokenize(char *p) {
             p += 3;
             continue;
         }
+        if (strncmp(p, "while", 5) == 0 && !is_alnum(p[5])) { // while
+            cur = new_token(TK_WHILE, cur, p, 5);
+            p += 5;
+            continue;
+        }
 
         if (is_alnum(*p)) { // 変数
             int i = 1;

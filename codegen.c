@@ -70,13 +70,15 @@ void gen(Node *node) {
         printf(".Lend%d:\n", node->label);
         return;
 
-    case ND_BLOCK:
-        for (int i = 0; i < vec_size(node->stmts); i++) {
-            gen(node->stmts->data[i]);
-            if (i != vec_size(node->stmts)-1) { // 最後の文以外の値は要らないのでpop
-                printf("  pop rax\n");
-            }
-        }
+    case ND_WHILE:
+        printf(".Lbegin%d:\n", node->label);
+        gen(node->cond);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je   .Lend%d\n", node->label);
+        gen(node->body);
+        printf("  jmp .Lbegin%d\n", node->label);
+        printf(".Lend%d:\n", node->label);
         return;
 
     case ND_FOR:
@@ -90,6 +92,15 @@ void gen(Node *node) {
         gen(node->inc);
         printf("  jmp .Lbegin%d\n", node->label);
         printf(".Lend%d:\n", node->label);
+        return;
+
+    case ND_BLOCK:
+        for (int i = 0; i < vec_size(node->stmts); i++) {
+            gen(node->stmts->data[i]);
+            if (i != vec_size(node->stmts)-1) { // 最後の文以外の値は要らないのでpop
+                printf("  pop rax\n");
+            }
+        }
         return;
 
     }

@@ -26,12 +26,14 @@ void gen(Node *node) {
     case ND_NUM:
         printf("  push %d\n", node->val);
         return;
+
     case ND_LVAR:
         gen_lval(node);
         printf("  pop rax\n");
         printf("  mov rax, [rax]\n");
         printf("  push rax\n");
         return;
+
     case ND_ASSIGN:
         gen_lval(node->lhs);
         gen(node->rhs);
@@ -41,6 +43,7 @@ void gen(Node *node) {
         printf("  mov [rax], rdi\n");
         printf("  push rdi\n");
         return;
+
     case ND_RETURN:
         gen(node->lhs);
         printf("  pop rax\n");
@@ -48,6 +51,7 @@ void gen(Node *node) {
         printf("  pop rbp\n");
         printf("  ret\n");
         return;
+
     case ND_IF:
         gen(node->cond);
         printf("  pop rax\n");
@@ -65,6 +69,7 @@ void gen(Node *node) {
         }
         printf(".Lend%d:\n", node->label);
         return;
+
     case ND_BLOCK:
         for (int i = 0; i < vec_size(node->stmts); i++) {
             gen(node->stmts->data[i]);
@@ -73,6 +78,20 @@ void gen(Node *node) {
             }
         }
         return;
+
+    case ND_FOR:
+        gen(node->init);
+        printf(".Lbegin%d:\n", node->label);
+        gen(node->cond);
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");
+        printf("  je   .Lend%d\n", node->label);
+        gen(node->body);
+        gen(node->inc);
+        printf("  jmp .Lbegin%d\n", node->label);
+        printf(".Lend%d:\n", node->label);
+        return;
+
     }
 
     gen(node->lhs);

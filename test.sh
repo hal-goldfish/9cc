@@ -50,6 +50,12 @@ assert 4 "if(2<1) if(2>1) 1; else 2; else 3; 4;"
 assert 2 "{2;}"
 assert 2 "{{3;}2;}"
 assert 2 "if(1>2) {1;}else {if(2>1) {2;}else 3;}"
+assert 55 "
+sum = 0;
+for(i = 0; i <= 10; i = i + 1) {
+    sum = sum + i;
+}
+return sum;"
 
 
 

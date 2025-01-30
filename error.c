@@ -31,3 +31,9 @@ void error(char *fmt, ...) {
     fprintf(stderr, "\n");
     exit(1);
 }
+
+void debug(char *fmt) {
+    fprintf(stderr, "\n");
+    fprintf(stderr, "%s", fmt);
+    fprintf(stderr, "\n");
+}

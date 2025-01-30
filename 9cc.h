@@ -23,6 +23,7 @@ typedef enum {
     ND_RETURN,  // return 文
     ND_IF,      // if 文
     ND_BLOCK,   // ブロック {}
+    ND_FOR,     // for
     ND_NUM,     // 整数
 } NodeKind;
 
@@ -38,10 +39,15 @@ struct Node {
     int offset;     // kindがND_LVARの場合のみ使う
 
 
-    // if 
+    // "if" (cond) then "else" els
+    // "for" (init; cond; inc) body
     Node *cond;
     Node *then;
     Node *els;
+    Node *init;
+    Node *inc;
+    Node *body;
+
     int label;
 
     // block
@@ -63,6 +69,7 @@ typedef enum {
     TK_RETURN,      // return 文
     TK_IF,          // if 文
     TK_ELSE,        // else
+    TK_FOR,         // for
     TK_EOF,         // EOF
 } TokenKind;
 

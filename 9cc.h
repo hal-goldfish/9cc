@@ -37,6 +37,17 @@ struct Node {
     int label;
 };
 
+typedef struct { // Node のベクタ
+    int len;
+    int cap;
+    void **top;
+} Vector;
+
+Vector *new_vec();
+void vec_push(Vector *, void *);
+void *vec_pop(Vector *);
+int vec_size(Vector *);
+
 
 
 // トークンの種類

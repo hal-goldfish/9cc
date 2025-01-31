@@ -20,6 +20,7 @@ typedef enum {
     ND_LESEQU,  // <=
     ND_ASSIGN,  // = 代入演算子
     ND_LVAR,    // ローカル変数
+    ND_FUNC,    // 関数
     ND_RETURN,  // return 文
     ND_IF,      // if 文
     ND_BLOCK,   // ブロック {}
@@ -39,6 +40,7 @@ struct Node {
     int val;        // kindがND_NUMの場合のみ使う
     int offset;     // kindがND_LVARの場合のみ使う
 
+    char *name;
 
     // "if" (cond) then "else" els
     // "for" (init; cond; inc) body
@@ -111,3 +113,6 @@ extern Vector *code;
 
 void error_at(char *, char *, ...);
 void error(char *, ...);
+
+void foo();
+void debug(char *, ...);

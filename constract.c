@@ -36,12 +36,15 @@ bool is_ident() {
     return token->kind == TK_IDENT;
 }
 
-void consume_ident() {
+Token *consume_ident() {
     if (token->kind != TK_IDENT) {
         error("変数ではありません");
-        return;
+        return NULL;
     }
+    Token *res = malloc(sizeof(Token));
+    res = token;
     token = token->next;
+    return res;
 }
 
 // 次のトークンが期待している記号のときには、トークンを1つ読み進める。
@@ -96,27 +99,37 @@ Node *primary() {
         return node;
     }
 
-    // 変数
+    // 変数 or 関数
     if (is_ident()) {
+        Token *tmp = consume_ident();
         Node *node = calloc(1, sizeof(Node));
-        node->kind = ND_LVAR;
 
-        LVar *lvar = find_lvar(token);
-        if (lvar) {
-            node->offset = lvar->offset;
+        if (consume("(")) { // 関数
+            expect(")");
+            node->kind = ND_FUNC;
+            node->name = malloc(sizeof(char) * tmp->len);
+            strncpy(node->name, tmp->str, tmp->len);
+            debug("%s", node->name);
         }
-        else {
-            lvar = calloc(1, sizeof(LVar));
-            lvar->next = locals;
-            lvar->name = token->str;
-            lvar->len = token->len;
-            lvar->offset = locals->offset + 8;
-            node->offset = lvar->offset;
-            locals = lvar;
-        }
+        else { // 変数
+            node->kind = ND_LVAR;
 
-        consume_ident();
+            LVar *lvar = find_lvar(tmp);
+            if (lvar) {
+                node->offset = lvar->offset;
+            }
+            else {
+                lvar = calloc(1, sizeof(LVar));
+                lvar->next = locals;
+                lvar->name = tmp->str;
+                lvar->len = tmp->len;
+                lvar->offset = locals->offset + 8;
+                node->offset = lvar->offset;
+                locals = lvar;
+            }
+        }
         return node;
+        
     }
 
     // 数字

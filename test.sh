@@ -73,6 +73,11 @@ while(i >= 0) {
 return sum;
 "
 
+assert 1 "
+foo();
+1;
+"
+
 
 
 

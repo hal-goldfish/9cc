@@ -104,7 +104,15 @@ void gen(Node *node) {
         return;
 
     case ND_FUNC:
+        for (int i = vec_size(node->args) - 1; i >= 0; i--) {
+            gen(node->args->data[i]);
+            char *c[] = {"RDI", "RSI", "RDX", "RCX", "R8", "R9"};
+            if (i < 6) {
+                printf("  pop %s\n", c[i]);
+            }
+        }
         printf("  call %s\n", node->name);
+        printf("  push 0\n");
         return;
     }
 

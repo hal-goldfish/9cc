@@ -7,6 +7,10 @@
 
 #include "9cc.h"
 
+int roundup(int x, int align) {
+    return (x + align - 1) & ~(align - 1);
+}
+
 Token *token;
 char *user_input;
 
@@ -30,11 +34,11 @@ int main(int argc, char **argv) {
     printf(".globl main\n");
     printf("main:\n");
 
-    // // プロローグ
-    // // 変数のメモリ領域を確保する
+    // プロローグ
+    // 変数のメモリ領域を確保する
     printf("  push rbp\n");
     printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %d\n", locals->offset);
+    printf("  sub rsp, %d\n", roundup(locals->offset, 16));
 
     // 抽象構文木を下りながらコード生成
     for (int i = 0; i < vec_size(code); i++) {

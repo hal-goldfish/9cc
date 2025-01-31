@@ -5,7 +5,8 @@ assert() {
   input="$2"
 
   ./9cc "$input" > tmp.s
-  cc -o tmp tmp.s
+  cc -c tmp.s
+  cc -o tmp tmp.o test.o
   ./tmp
   actual="$?"
 
@@ -72,12 +73,11 @@ while(i >= 0) {
 }
 return sum;
 "
-
-assert 1 "
+assert 0 "
 foo();
-1;
+bar(1,2,3);
+huga(1,2,3,4,5,6,7,8);
 "
-
 
 
 

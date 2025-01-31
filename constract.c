@@ -105,11 +105,16 @@ Node *primary() {
         Node *node = calloc(1, sizeof(Node));
 
         if (consume("(")) { // 関数
-            expect(")");
             node->kind = ND_FUNC;
             node->name = malloc(sizeof(char) * tmp->len);
+            node->args = new_vec();
+            while (!consume(")")) {
+                Node *arg = malloc(sizeof(Node));
+                arg = expr();
+                vec_push(node->args, arg);
+                if (consume(",")) continue;
+            }
             strncpy(node->name, tmp->str, tmp->len);
-            debug("%s", node->name);
         }
         else { // 変数
             node->kind = ND_LVAR;

@@ -6,5 +6,5 @@ a.out
 bash
 .*
 memo
-test.c
 *.txt
+*

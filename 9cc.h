@@ -56,6 +56,9 @@ struct Node {
 
     // block
     Vector *stmts;
+
+    // func
+    Vector *args;
 };
 
 Vector *new_vec();
@@ -114,5 +117,7 @@ extern Vector *code;
 void error_at(char *, char *, ...);
 void error(char *, ...);
 
-void foo();
 void debug(char *, ...);
+
+void foo();
+void bar(int, int, int);

@@ -8,6 +8,8 @@
 
 #include "9cc.h"
 
+const char *reg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
+
 
 // 左辺値を要求する場合の処理
 void gen_lval(Node *node) {
@@ -106,9 +108,8 @@ void gen(Node *node) {
     case ND_FUNCCALL:
         for (int i = vec_size(node->args) - 1; i >= 0; i--) {
             gen(node->args->data[i]);
-            char *c[] = {"RDI", "RSI", "RDX", "RCX", "R8", "R9"};
             if (i < 6) {
-                printf("  pop %s\n", c[i]);
+                printf("  pop %s\n", reg[i]);
             }
         }
         printf("  call %s\n", node->name);
@@ -163,7 +164,7 @@ void gen(Node *node) {
 }
 
 void func_gen(Function *func) {
-    
+
     // プロローグ
     printf("%s:\n", func->name);
     printf("  push rbp\n");
@@ -172,15 +173,12 @@ void func_gen(Function *func) {
 
     // 引数の処理
     for (int i = 0; i < vec_size(func->args); i++) {
-        char *c[] = {"RDI", "RSI", "RDX", "RCX", "R8", "R9"};
         Node *arg = vec_at(func->args, i);
-        printf("  mov rax, rbp\n");
-        printf("  sub rax, %d\n", arg->offset);
         if (i < 6) {
-            printf("  mov [rax], %s\n", c[i]);
+            printf("  mov [rbp-%d], %s\n", arg->offset, reg[i]);
         }
         else {
-            printf("  pop [rax]\n");
+            printf("  pop [rax-%d]\n", arg->offset);
         }
     }
 

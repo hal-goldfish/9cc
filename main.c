@@ -7,16 +7,10 @@
 
 #include "9cc.h"
 
-int roundup(int x, int align) {
-    return (x + align - 1) & ~(align - 1);
-}
-
 Token *token;
 char *user_input;
 
-Vector *code;
-
-LVar *locals;
+Vector *funcs;
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -32,27 +26,11 @@ int main(int argc, char **argv) {
     // アセンブリの前半部分を出力
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
-    printf("main:\n");
 
-    // プロローグ
-    // 変数のメモリ領域を確保する
-    printf("  push rbp\n");
-    printf("  mov rbp, rsp\n");
-    printf("  sub rsp, %d\n", roundup(locals->offset, 16));
-
-    // 抽象構文木を下りながらコード生成
-    for (int i = 0; i < vec_size(code); i++) {
-        gen(code->data[i]);
-
-        // 式の評価結果としてスタックに一つの値が残っている
-        // はずなので、スタックが溢れないようにポップしておく
-        printf("  pop rax\n");
+    // 関数の処理
+    for (int i = 0; i < vec_size(funcs); i++) {
+        func_gen(vec_at(funcs, i));
     }
 
-    // エピローグ
-    // 最後の式の結果がRAXに残っているのでそれが返り値になる
-    printf("  mov rsp, rbp\n");
-    printf("  pop rbp\n");
-    printf("  ret\n");
     return 0;
 }

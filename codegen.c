@@ -103,7 +103,7 @@ void gen(Node *node) {
         }
         return;
 
-    case ND_FUNC:
+    case ND_FUNCCALL:
         for (int i = vec_size(node->args) - 1; i >= 0; i--) {
             gen(node->args->data[i]);
             char *c[] = {"RDI", "RSI", "RDX", "RCX", "R8", "R9"};
@@ -112,7 +112,7 @@ void gen(Node *node) {
             }
         }
         printf("  call %s\n", node->name);
-        printf("  push 0\n");
+        printf("  push rax\n");
         return;
     }
 
@@ -160,4 +160,38 @@ void gen(Node *node) {
 
 
     printf("  push rax\n");
+}
+
+void func_gen(Function *func) {
+    
+    // プロローグ
+    printf("%s:\n", func->name);
+    printf("  push rbp\n");
+    printf("  mov rbp, rsp\n");
+    printf("  sub rsp, %d\n", roundup(func->locals->offset, 16));
+
+    // 引数の処理
+    for (int i = 0; i < vec_size(func->args); i++) {
+        char *c[] = {"RDI", "RSI", "RDX", "RCX", "R8", "R9"};
+        Node *arg = vec_at(func->args, i);
+        printf("  mov rax, rbp\n");
+        printf("  sub rax, %d\n", arg->offset);
+        if (i < 6) {
+            printf("  mov [rax], %s\n", c[i]);
+        }
+        else {
+            printf("  pop [rax]\n");
+        }
+    }
+
+    for (int i = 0; i < vec_size(func->code); i++) {
+        gen(vec_at(func->code, i));
+        printf("  pop rax\n");
+    }
+
+    // エピローグ
+    // 最後の式の結果がRAXに残っているのでそれが返り値になる
+    printf("  mov rsp, rbp\n");
+    printf("  pop rbp\n");
+    printf("  ret\n");
 }

@@ -20,63 +20,82 @@ assert() {
 
 make 9cc
 
-assert 0 "0;"
-assert 42 "42;"
-assert 21 "5+20-4;"
-assert 21 "5 + 20 - 4+0;"
-assert 135 "((1+2)*(5+0)) * (3 + 2*3);"
-assert 10 "-10 + 20;"
-assert 10 "-(-(1 + 2 + 3 - -4));"
-assert 100 "-10*-10;"
-assert 20 "+10++10;"
-assert 1 "1==1;"
-assert 1 " -10 + 20 == -(-(1 + 2 + 3 - -4));"
-assert 1 "0 < 1;"
-assert 0 "0 > 1;"
-assert 1 "-1 >=-2;"
-assert 0 "-1 <=-2;"
-assert 0 "1<1;"
-assert 0 "1>1;"
-assert 1 "1<100;"
-assert 0 "1<100; 1<1;"
-assert 3 "a=1; b=2; a+b;"
-assert 1 "(a) = 1;"
-assert 2 "foo = 1; bar = 2; foo*bar;"
-assert 6 "foo = 2; bar = 3; return a = foo * bar; foo+bar;"
-assert 1 "if(1==1) 1; else 2;"
-assert 1 "if(2>1) if(2>1) 1; else 2; else 3;"
-assert 2 "if(2>1) if(2<1) 1; else 2; else 3;"
-assert 3 "if(2<1) if(2>1) 1; else 2; else 3;"
-assert 4 "if(2<1) if(2>1) 1; else 2; else 3; 4;"
-assert 2 "{2;}"
-assert 2 "{{3;}2;}"
-assert 2 "if(1>2) {1;}else {if(2>1) {2;}else 3;}"
+assert 0 "main(){0;}"
+assert 42 "main(){42;}"
+assert 21 "main(){5+20-4;}"
+assert 21 "main(){5 + 20 - 4+0;}"
+assert 135 "main(){((1+2)*(5+0)) * (3 + 2*3);}"
+assert 10 "main(){-10 + 20;}"
+assert 10 "main(){-(-(1 + 2 + 3 - -4));}"
+assert 100 "main(){-10*-10;}"
+assert 20 "main(){+10++10;}"
+assert 1 "main(){1==1;}"
+assert 1 "main(){-10 + 20 == -(-(1 + 2 + 3 - -4));}"
+assert 1 "main(){0 < 1;}"
+assert 0 "main(){0 > 1;}"
+assert 1 "main(){-1 >=-2;}"
+assert 0 "main(){-1 <=-2;}"
+assert 0 "main(){1<1;}"
+assert 0 "main(){1>1;}"
+assert 1 "main(){1<100;}"
+assert 0 "main(){1<100; 1<1;}"
+assert 3 "main(){a=1; b=2; a+b;}"
+assert 1 "main(){(a) = 1;}"
+assert 2 "main(){foo = 1; bar = 2; foo*bar;}"
+assert 6 "main(){foo = 2; bar = 3; return a = foo * bar; foo+bar;}"
+assert 1 "main(){if(1==1) 1; else 2;}"
+assert 1 "main(){if(2>1) if(2>1) 1; else 2; else 3;}"
+assert 2 "main(){if(2>1) if(2<1) 1; else 2; else 3;}"
+assert 3 "main(){if(2<1) if(2>1) 1; else 2; else 3;}"
+assert 4 "main(){if(2<1) if(2>1) 1; else 2; else 3; 4;}"
+assert 2 "main(){{2;}}"
+assert 2 "main(){{{3;}2;}}"
+assert 2 "main(){if(1>2) {1;}else {if(2>1) {2;}else 3;}}"
 assert 55 "
-sum = 0;
-for(i = 0; i <= 10; i = i + 1) {
-    sum = sum + i;
+main() {
+    i = 10; sum = 0;
+    while(i >= 0) {
+        sum += i;
+        i -= 1;
+    }
+    return sum;
 }
-return sum;"
-assert 55 "
-i = 0; sum = 0;
-while(i <= 10) {
-    sum += i;
-    i += 1;
-}
-return sum;
 "
-assert 55 "
-i = 10; sum = 0;
-while(i >= 0) {
-    sum += i;
-    i -= 1;
+
+assert 1 "
+main() {
+    foo();
+    bar(1,2,3);
+    huga(1,2,3,4,5,6,7,8);
+    return 1;
 }
-return sum;
 "
-assert 0 "
-foo();
-bar(1,2,3);
-huga(1,2,3,4,5,6,7,8);
+
+assert 4 "
+
+sub(a, b) {
+    return a-b;
+}
+
+add(a, b) {
+    return a+b;
+}
+
+main() {
+    return add(1,2) + sub(3,2);
+}
+"
+
+assert 55 "
+
+fib(n) {
+    if (n <= 2) return 1;
+    return fib(n-1) + fib(n-2);
+}
+
+main() {
+    return fib(10);
+}
 "
 
 

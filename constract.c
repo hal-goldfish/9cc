@@ -12,7 +12,9 @@ int label_count;
 
 // 変数を名前で検索する。見つからなかった場合はNULLを返す。
 LVar *find_lvar(Token *tok) {
-    for (LVar *var = locals; var; var = var->next) {
+    Function *fc = calloc(1, sizeof(Function));
+    fc = vec_last(funcs);
+    for (LVar *var = fc->locals; var; var = var->next) {
         if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
             return var;
     }
@@ -38,7 +40,7 @@ bool is_ident() {
 
 Token *consume_ident() {
     if (token->kind != TK_IDENT) {
-        error("変数ではありません");
+        error_at(token->str, "変数ではありません");
         return NULL;
     }
     Token *res = malloc(sizeof(Token));
@@ -105,7 +107,7 @@ Node *primary() {
         Node *node = calloc(1, sizeof(Node));
 
         if (consume("(")) { // 関数
-            node->kind = ND_FUNC;
+            node->kind = ND_FUNCCALL;
             node->name = malloc(sizeof(char) * tmp->len);
             node->args = new_vec();
             while (!consume(")")) {
@@ -125,12 +127,14 @@ Node *primary() {
             }
             else {
                 lvar = calloc(1, sizeof(LVar));
-                lvar->next = locals;
+                Function *fc = calloc(1, sizeof(Function));
+                fc = vec_last(funcs);
+                lvar->next = fc->locals;
                 lvar->name = tmp->str;
                 lvar->len = tmp->len;
-                lvar->offset = locals->offset + 8;
+                lvar->offset = fc->locals->offset + 8;
                 node->offset = lvar->offset;
-                locals = lvar;
+                fc->locals = lvar;
             }
         }
         return node;
@@ -302,12 +306,55 @@ Node *statement() {
     return node;
 }
 
-Node *program() {
-    locals = calloc(1, sizeof(LVar));
-    int i = 0;
-    code = new_vec();
-    for (; !at_eof(); i++) {
-        vec_push(code, statement());
+Function *function() {
+    Token *tok = consume_ident();
+    if(!tok) error_at(tok->str, "関数名ではありません");
 
+    Function *func = calloc(1, sizeof(Function));
+    vec_push(funcs, func);
+    func->locals = calloc(1, sizeof(LVar));
+    func->name = malloc(sizeof(char) * tok->len);
+    strncpy(func->name, tok->str, tok->len);
+    func->len = tok->len;
+    func->args = new_vec();
+    func->code = new_vec();
+
+    expect("(");
+    for (; !consume(")"); ) {
+        Token *tok = calloc(1, sizeof(Token));
+        tok = consume_ident();
+        Node *arg = calloc(1, sizeof(Node));
+        arg->name = tok->str;
+        arg->kind = ND_LVAR;
+        
+        func->lvars = calloc(1, sizeof(LVar));
+        func->lvars->next = func->locals;
+        func->lvars->name = tok->str;
+        func->lvars->len = tok->len;
+        func->lvars->offset = func->locals->offset + 8;
+        arg->offset = func->lvars->offset;
+        func->locals = func->lvars;
+
+        vec_push(func->args, arg);
+
+        if (consume(",")) continue;
+        else {
+            expect(")");
+            break;
+        }
+    }
+
+    expect("{");
+    while (!consume("}")) {
+        vec_push(func->code, statement());
+    }
+
+    return func;
+}
+
+void program() {
+    funcs = new_vec();
+    while (!at_eof()) {
+        function();
     }
 }

@@ -7,6 +7,10 @@
 
 #include "9cc.h"
 
+int roundup(int x, int align) {
+    return (x + align - 1) & ~(align - 1);
+}
+
 
 Vector *new_vec() {
     Vector *v = malloc(sizeof(Vector));
@@ -33,4 +37,13 @@ void *vec_pop(Vector *vec) {
 
 int vec_size(Vector *vec) {
     return vec->len;
+}
+
+void *vec_last(Vector *vec) {
+    return vec->data[vec->len - 1];
+}
+
+void *vec_at(Vector *vec, int i) {
+    if (i >= vec_size(vec)) error("範囲外アクセスです");
+    return vec->data[i];
 }

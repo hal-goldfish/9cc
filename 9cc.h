@@ -20,7 +20,7 @@ typedef enum {
     ND_LESEQU,  // <=
     ND_ASSIGN,  // = 代入演算子
     ND_LVAR,    // ローカル変数
-    ND_FUNC,    // 関数
+    ND_FUNCCALL,// 関数呼び出し
     ND_RETURN,  // return 文
     ND_IF,      // if 文
     ND_BLOCK,   // ブロック {}
@@ -65,6 +65,8 @@ Vector *new_vec();
 void vec_push(Vector *, void *);
 void *vec_pop(Vector *);
 int vec_size(Vector *);
+void *vec_last(Vector *);
+void *vec_at(Vector *, int);
 
 
 
@@ -96,28 +98,40 @@ typedef struct LVar LVar;
 
 // ローカル変数の型
 struct LVar {
-  LVar *next; // 次の変数かNULL
-  char *name; // 変数の名前
-  int len;    // 名前の長さ
-  int offset; // RBPからのオフセット
+    LVar *next; // 次の変数かNULL
+    char *name; // 変数の名前
+    int len;    // 名前の長さ
+    int offset; // RBPからのオフセット
 };
+
+typedef struct {
+    Node *node;
+    LVar *locals;
+    LVar *lvars;
+    char *name;
+    int len;
+    Vector *args;
+    Vector *code;
+} Function;
 
 extern Token *token;
 extern char *user_input;
 
-extern LVar *locals;
 
 Token *tokenize(char *);
-Node *program();
+void program();
 void gen(Node *);
 void error(char *, ...);
+void func_gen(Function *);
 
-extern Vector *code;
+extern Vector *funcs;
 
 void error_at(char *, char *, ...);
 void error(char *, ...);
 
 void debug(char *, ...);
+
+int roundup(int, int);
 
 void foo();
 void bar(int, int, int);

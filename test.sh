@@ -98,6 +98,22 @@ main() {
 }
 "
 
+assert 3 "
+main() {
+    a = 3;
+    b = &a;
+    return *b;
+}
+"
+
+assert 3 "
+main() {
+    a = 3; 
+    b = 4;
+    c = &b + 8;
+    return *c;
+}
+" 
 
 
 echo OK

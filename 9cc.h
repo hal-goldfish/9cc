@@ -18,6 +18,8 @@ typedef enum {
     ND_LES,     // <
     ND_GREEQU,  // >=
     ND_LESEQU,  // <=
+    ND_ADDR,    // 単項*
+    ND_DEREF,   // 単項&
     ND_ASSIGN,  // = 代入演算子
     ND_LVAR,    // ローカル変数
     ND_FUNCCALL,// 関数呼び出し

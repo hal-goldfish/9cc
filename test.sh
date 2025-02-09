@@ -83,18 +83,19 @@ int main() {
 }
 "
 
-assert 4 "
+assert 6 "
 
 int sub(int a, int b) {
     return a-b;
 }
 
-int add(int a, int b) {
-    return a+b;
+int add2(int a, int b) {
+    int c = 2;
+    return a+b+c;
 }
 
 int main() {
-    return add(1,2) + sub(3,2);
+    return add2(1,2) + sub(3,2);
 }
 "
 

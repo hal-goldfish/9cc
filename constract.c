@@ -100,6 +100,7 @@ Node *new_node_num(int val) {
 }
 
 Node *assign();
+Node *expr();
 
 Node *declaration() {
     Node *node = calloc(1, sizeof(Node));
@@ -121,11 +122,9 @@ Node *declaration() {
         node->init = assign();
     }
 
-    expect(";");
     return node;
 }
 
-Node *expr();
 
 Node *primary() {
     // 次のトークンが"("なら、"(" expr ")"のはず
@@ -161,15 +160,6 @@ Node *primary() {
             }
             else {
                 error_at(token->str, "未定義の変数です");
-                // lvar = calloc(1, sizeof(LVar));
-                // Function *fc = calloc(1, sizeof(Function));
-                // fc = vec_last(funcs);
-                // lvar->next = fc->locals;
-                // lvar->name = tmp->str;
-                // lvar->len = tmp->len;
-                // lvar->offset = fc->locals->offset + 8;
-                // node->offset = lvar->offset;
-                // fc->locals = lvar;
             }
         }
         return node;
@@ -279,9 +269,10 @@ Node *statement() {
 
     Node *node = calloc(1, sizeof(Node));
 
-    // 変数定義
     if (consume_int()) {
-        return declaration();
+        node = declaration();
+        expect(";");
+        return node;
     }
 
     if (consume("{")) {
@@ -330,8 +321,8 @@ Node *statement() {
             }
             else {
                 node->init = expr();
-                expect(";");
-            }   
+            }
+            expect(";");
         }
         if (!consume(";")) {
             node->cond = expr();
@@ -372,21 +363,7 @@ Function *function() {
     expect("(");
     for (; !consume(")"); ) {
         consume_int();
-        Token *tok = calloc(1, sizeof(Token));
-        tok = consume_ident();
-        Node *arg = calloc(1, sizeof(Node));
-        arg->name = tok->str;
-        arg->kind = ND_LVAR;
-        
-        func->lvars = calloc(1, sizeof(LVar));
-        func->lvars->next = func->locals;
-        func->lvars->name = tok->str;
-        func->lvars->len = tok->len;
-        func->lvars->offset = func->locals->offset + 8;
-        arg->offset = func->lvars->offset;
-        func->locals = func->lvars;
-
-        vec_push(func->args, arg);
+        vec_push(func->args, declaration());
 
         if (consume(",")) continue;
         else {

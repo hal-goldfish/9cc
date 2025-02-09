@@ -107,6 +107,14 @@ Node *declaration() {
     node->kind = ND_VARDEF;
 
     LVar *lvar = calloc(1, sizeof(LVar));
+    Type *type = calloc(1, sizeof(Type));
+    type->ty = INT;
+
+    while (consume("*")) {
+        type = ptr_to(type);
+    }
+    lvar->type = type;
+
     Function *fc = calloc(1, sizeof(Function));
     Token *tmp = calloc(1, sizeof(Token));
     tmp = consume_ident();

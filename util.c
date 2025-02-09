@@ -47,3 +47,10 @@ void *vec_at(Vector *vec, int i) {
     if (i >= vec_size(vec)) error("範囲外アクセスです");
     return vec->data[i];
 }
+
+Type *ptr_to(Type *base) {
+    Type *res = calloc(1, sizeof(Type));
+    res->ty = PTR;
+    res->ptr_to = base;
+    return res;
+}

@@ -121,12 +121,24 @@ int main() {
 
 assert 3 "
 int main() {
-    int a = 3; 
-    int b = 4;
-    int c = &b + 8;
-    return *c;
+    int x;
+    int *y = &x;
+    *y = 3;
+    return x; 
 }
-" 
+"
+
+assert 3 "
+int main() {
+    int a;
+    int *b;
+    int **c;
+    c = &b;
+    b = &a;
+    **c = 3;
+    return a;
+}
+"
 
 
 echo OK

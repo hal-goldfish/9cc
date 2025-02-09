@@ -18,8 +18,8 @@ typedef enum {
     ND_LES,     // <
     ND_GREEQU,  // >=
     ND_LESEQU,  // <=
-    ND_ADDR,    // 単項*
-    ND_DEREF,   // 単項&
+    ND_ADDR,    // 単項&
+    ND_DEREF,   // 単項*
     ND_ASSIGN,  // = 代入演算子
     ND_LVAR,    // ローカル変数
     ND_VARDEF,  // 変数定義
@@ -99,6 +99,12 @@ struct Token {
 };
 
 typedef struct LVar LVar;
+typedef struct Type Type;
+
+struct Type {
+    enum { INT, PTR } ty;
+    Type *ptr_to;
+};
 
 // ローカル変数の型
 struct LVar {
@@ -106,6 +112,7 @@ struct LVar {
     char *name; // 変数の名前
     int len;    // 名前の長さ
     int offset; // RBPからのオフセット
+    Type *type; // 型
 };
 
 typedef struct {
@@ -139,3 +146,5 @@ int roundup(int, int);
 
 void foo();
 void bar(int, int, int);
+
+Type *ptr_to(Type *);

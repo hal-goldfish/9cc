@@ -14,7 +14,7 @@ const char *reg[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9"};
 // 左辺値を要求する場合の処理
 // アドレスをスタックに push する
 void gen_lval(Node *node) {
-    if (node->kind != ND_LVAR) {
+    if (node->kind != ND_LVAR && node->kind != ND_VARDEF) {
         error("代入の左辺値が変数ではありません");
     }
     printf("  mov rax, rbp\n");
@@ -35,6 +35,18 @@ void gen(Node *node) {
         printf("  pop rax\n");
         printf("  mov rax, [rax]\n");
         printf("  push rax\n");
+        return;
+
+    case ND_VARDEF:
+        if (node->init) {
+            gen_lval(node);
+            gen(node->init);
+            printf("  pop rdi\n");
+            printf("  pop rax\n");
+            printf("  mov [rax], rdi\n");
+            printf("  push rdi\n");
+        }
+        else gen_lval(node);
         return;
 
     case ND_ASSIGN:

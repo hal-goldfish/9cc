@@ -38,6 +38,15 @@ bool is_ident() {
     return token->kind == TK_IDENT;
 }
 
+bool consume_int() {
+    if (token->kind == TK_RESERVED &&
+        memcmp(token->str, "int", token->len) == 0) {
+        token = token->next;
+        return true;
+    }
+    return false;
+}
+
 Token *consume_ident() {
     if (token->kind != TK_IDENT) {
         error_at(token->str, "変数ではありません");
@@ -90,6 +99,31 @@ Node *new_node_num(int val) {
     return node;
 }
 
+Node *assign();
+
+Node *declaration() {
+    Node *node = calloc(1, sizeof(Node));
+    node->kind = ND_VARDEF;
+
+    LVar *lvar = calloc(1, sizeof(LVar));
+    Function *fc = calloc(1, sizeof(Function));
+    Token *tmp = calloc(1, sizeof(Token));
+    tmp = consume_ident();
+    fc = vec_last(funcs);
+    lvar->next = fc->locals;
+    lvar->name = tmp->str;
+    lvar->len = tmp->len;
+    lvar->offset = fc->locals->offset + 8;
+    node->offset = lvar->offset;
+    fc->locals = lvar;
+
+    if (consume("=")) {
+        node->init = assign();
+    }
+
+    expect(";");
+    return node;
+}
 
 Node *expr();
 
@@ -126,15 +160,16 @@ Node *primary() {
                 node->offset = lvar->offset;
             }
             else {
-                lvar = calloc(1, sizeof(LVar));
-                Function *fc = calloc(1, sizeof(Function));
-                fc = vec_last(funcs);
-                lvar->next = fc->locals;
-                lvar->name = tmp->str;
-                lvar->len = tmp->len;
-                lvar->offset = fc->locals->offset + 8;
-                node->offset = lvar->offset;
-                fc->locals = lvar;
+                error_at(token->str, "未定義の変数です");
+                // lvar = calloc(1, sizeof(LVar));
+                // Function *fc = calloc(1, sizeof(Function));
+                // fc = vec_last(funcs);
+                // lvar->next = fc->locals;
+                // lvar->name = tmp->str;
+                // lvar->len = tmp->len;
+                // lvar->offset = fc->locals->offset + 8;
+                // node->offset = lvar->offset;
+                // fc->locals = lvar;
             }
         }
         return node;
@@ -244,6 +279,11 @@ Node *statement() {
 
     Node *node = calloc(1, sizeof(Node));
 
+    // 変数定義
+    if (consume_int()) {
+        return declaration();
+    }
+
     if (consume("{")) {
         node->kind = ND_BLOCK;
         node->stmts = new_vec();
@@ -285,8 +325,13 @@ Node *statement() {
         node->kind = ND_FOR;
         node->label = label_count++;
         if (!consume(";")) {
-            node->init = expr();
-            expect(";");
+            if (consume_int()) {
+                node->init = declaration();
+            }
+            else {
+                node->init = expr();
+                expect(";");
+            }   
         }
         if (!consume(";")) {
             node->cond = expr();
@@ -311,8 +356,9 @@ Node *statement() {
 }
 
 Function *function() {
+    if (!consume_int()) error_at(token->str, "返り値の型の定義がありません");
     Token *tok = consume_ident();
-    if(!tok) error_at(tok->str, "関数名ではありません");
+    if (!tok) error_at(tok->str, "関数名ではありません");
 
     Function *func = calloc(1, sizeof(Function));
     vec_push(funcs, func);
@@ -325,6 +371,7 @@ Function *function() {
 
     expect("(");
     for (; !consume(")"); ) {
+        consume_int();
         Token *tok = calloc(1, sizeof(Token));
         tok = consume_ident();
         Node *arg = calloc(1, sizeof(Node));

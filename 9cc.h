@@ -22,6 +22,7 @@ typedef enum {
     ND_DEREF,   // 単項&
     ND_ASSIGN,  // = 代入演算子
     ND_LVAR,    // ローカル変数
+    ND_VARDEF,  // 変数定義
     ND_FUNCCALL,// 関数呼び出し
     ND_RETURN,  // return 文
     ND_IF,      // if 文
@@ -47,6 +48,7 @@ struct Node {
     // "if" (cond) then "else" els
     // "for" (init; cond; inc) body
     // "while" (cond) body
+    // <type-name> <var-name> = init;
     Node *cond;
     Node *then;
     Node *els;

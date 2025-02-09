@@ -20,40 +20,42 @@ assert() {
 
 make 9cc
 
-assert 0 "main(){0;}"
-assert 42 "main(){42;}"
-assert 21 "main(){5+20-4;}"
-assert 21 "main(){5 + 20 - 4+0;}"
-assert 135 "main(){((1+2)*(5+0)) * (3 + 2*3);}"
-assert 10 "main(){-10 + 20;}"
-assert 10 "main(){-(-(1 + 2 + 3 - -4));}"
-assert 100 "main(){-10*-10;}"
-assert 20 "main(){+10++10;}"
-assert 1 "main(){1==1;}"
-assert 1 "main(){-10 + 20 == -(-(1 + 2 + 3 - -4));}"
-assert 1 "main(){0 < 1;}"
-assert 0 "main(){0 > 1;}"
-assert 1 "main(){-1 >=-2;}"
-assert 0 "main(){-1 <=-2;}"
-assert 0 "main(){1<1;}"
-assert 0 "main(){1>1;}"
-assert 1 "main(){1<100;}"
-assert 0 "main(){1<100; 1<1;}"
-assert 3 "main(){a=1; b=2; a+b;}"
-assert 1 "main(){(a) = 1;}"
-assert 2 "main(){foo = 1; bar = 2; foo*bar;}"
-assert 6 "main(){foo = 2; bar = 3; return a = foo * bar; foo+bar;}"
-assert 1 "main(){if(1==1) 1; else 2;}"
-assert 1 "main(){if(2>1) if(2>1) 1; else 2; else 3;}"
-assert 2 "main(){if(2>1) if(2<1) 1; else 2; else 3;}"
-assert 3 "main(){if(2<1) if(2>1) 1; else 2; else 3;}"
-assert 4 "main(){if(2<1) if(2>1) 1; else 2; else 3; 4;}"
-assert 2 "main(){{2;}}"
-assert 2 "main(){{{3;}2;}}"
-assert 2 "main(){if(1>2) {1;}else {if(2>1) {2;}else 3;}}"
+assert 0 "int main(){0;}"
+assert 42 "int main(){42;}"
+assert 21 "int main(){5+20-4;}"
+assert 21 "int main(){5 + 20 - 4+0;}"
+assert 135 "int main(){((1+2)*(5+0)) * (3 + 2*3);}"
+assert 10 "int main(){-10 + 20;}"
+assert 10 "int main(){-(-(1 + 2 + 3 - -4));}"
+assert 100 "int main(){-10*-10;}"
+assert 20 "int main(){+10++10;}"
+assert 1 "int main(){1==1;}"
+assert 1 "int main(){-10 + 20 == -(-(1 + 2 + 3 - -4));}"
+assert 1 "int main(){0 < 1;}"
+assert 0 "int main(){0 > 1;}"
+assert 1 "int main(){-1 >=-2;}"
+assert 0 "int main(){-1 <=-2;}"
+assert 0 "int main(){1<1;}"
+assert 0 "int main(){1>1;}"
+assert 1 "int main(){1<100;}"
+assert 0 "int main(){1<100; 1<1;}"
+assert 1 "int main() { int a; a = 1; return a; }"
+assert 2 "int main(){int a; a=1; int b; b=2; return b;}"
+assert 3 "int main(){int a; a=1; int b; b=2; return a+b;}"
+assert 1 "int main(){int a = 1;}"
+assert 2 "int main(){int foo = 1; int bar = 2; foo*bar;}"
+assert 6 "int main(){int foo = 2; int bar = 3; return foo * bar; foo+bar;}"
+assert 1 "int main(){if(1==1) 1; else 2;}"
+assert 1 "int main(){if(2>1) if(2>1) 1; else 2; else 3;}"
+assert 2 "int main(){if(2>1) if(2<1) 1; else 2; else 3;}"
+assert 3 "int main(){if(2<1) if(2>1) 1; else 2; else 3;}"
+assert 4 "int main(){if(2<1) if(2>1) 1; else 2; else 3; 4;}"
+assert 2 "int main(){{2;}}"
+assert 2 "int main(){{{3;}2;}}"
+assert 2 "int main(){if(1>2) {1;}else {if(2>1) {2;}else 3;}}"
 assert 55 "
-main() {
-    i = 10; sum = 0;
+int main() {
+    int i = 10; int sum = 0;
     while(i >= 0) {
         sum += i;
         i -= 1;
@@ -62,8 +64,18 @@ main() {
 }
 "
 
+assert 55 "
+int main() {
+    int sum = 0;
+    for(int i = 0; i <= 10; i += 1) {
+        sum += i;
+    }
+    return sum;
+}
+"
+
 assert 1 "
-main() {
+int main() {
     foo();
     bar(1,2,3);
     huga(1,2,3,4,5,6,7,8);
@@ -73,44 +85,44 @@ main() {
 
 assert 4 "
 
-sub(a, b) {
+int sub(int a, int b) {
     return a-b;
 }
 
-add(a, b) {
+int add(int a, int b) {
     return a+b;
 }
 
-main() {
+int main() {
     return add(1,2) + sub(3,2);
 }
 "
 
 assert 55 "
 
-fib(n) {
+int fib(int n) {
     if (n <= 2) return 1;
     return fib(n-1) + fib(n-2);
 }
 
-main() {
+int main() {
     return fib(10);
 }
 "
 
 assert 3 "
-main() {
-    a = 3;
-    b = &a;
+int main() {
+    int a = 3;
+    int b = &a;
     return *b;
 }
 "
 
 assert 3 "
-main() {
-    a = 3; 
-    b = 4;
-    c = &b + 8;
+int main() {
+    int a = 3; 
+    int b = 4;
+    int c = &b + 8;
     return *c;
 }
 " 
